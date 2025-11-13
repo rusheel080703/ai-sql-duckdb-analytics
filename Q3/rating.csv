@@ -1,0 +1,8 @@
+rating_id,student_id,rated_type,rated_id,stars
+601,1,instructor,1,5
+602,2,instructor,1,4
+603,3,instructor,1,5
+604,4,instructor,2,3
+605,5,instructor,2,5
+606,6,instructor,3,4
+607,7,instructor,3,5

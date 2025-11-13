@@ -1,0 +1,5 @@
+schedule_id,class_code,instructor_id,week_number,start_time,end_time
+801,PY1,1,1,9:00:00,11:00:00
+802,PY1,2,1,14:00:00,16:00:00
+803,JS1,3,1,10:00:00,12:00:00
+804,AR1,1,2,9:00:00,11:00:00
