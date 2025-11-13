@@ -1,10 +1,11 @@
+
 # 🤖 AI SQL DuckDB Analytics
 
 **Bridging Large Language Models and High-Performance Analytics using DuckDB and Python.**
 
 This repository documents an analytical project focused on using an **AI model (Kimi K2)** to generate complex SQL queries and executing them efficiently using the **DuckDB** in-process OLAP database.
 
-The project demonstrates the practical application of AI in generating complex business logic, particularly for calculating metrics like attendance (via project/class week correlation) and payroll.
+The project demonstrates the application of AI in generating business logic, particularly for calculating metrics like attendance and payroll.
 
 ---
 
@@ -15,18 +16,18 @@ The project demonstrates the practical application of AI in generating complex b
 3.  [📊 Analytics Queries (Q1 - Q5)](#-analytics-queries-q1---q5)
 4.  [💻 Setup & Execution](#-setup--execution)
 5.  [📁 Project Structure](#-project-structure)
+6.  [🧑‍💻 Author](#-author)
 
 ---
 
 ## 🧠 Methodology: AI-Generated SQL
 
-The core of this project is the integration of an AI model (Kimi K2) to generate five complex SQL queries required for the college's analytics.
+The project's core involves generating five complex SQL queries (Q1-Q5) using an AI model and executing them against a relational data set loaded from local CSV files.
 
-### LLM Integration & Adaptation
+### Key Analytical Logic
 
-* **SQL Generation:** Kimi K2 provided the underlying logic for all five queries (Q1-Q5).
-* **Execution:** The queries are executed in Python using the **DuckDB** library, which reads data directly from the local CSV files (e.g., `instructor.csv`, `class_schedule.csv`).
-* **Technical Fix (Q5):** The AI-generated SQL for payroll calculation (Q5) required a manual fix in the Python script to use DuckDB's native functions (`strptime` and `date_part`) to correctly calculate the difference between `start_time` and `end_time` in hours.
+* **Attendance/Enrollment (Q2, Q4):** A student's class attendance is **inferred** if they are on a project team that runs in the **same week** as the scheduled class session.
+* **Payroll Calculation (Q5):** The total pay is calculated by summing teaching pay and supervision pay. The AI-generated SQL required a manual fix in the Python script to use DuckDB's native functions (`strptime` and `date_part`) to correctly calculate teaching hours from the time strings.
 
 ---
 
@@ -43,21 +44,19 @@ The core of this project is the integration of an AI model (Kimi K2) to generate
 
 ## 📊 Analytics Queries (Q1 - Q5)
 
-The project solves five key analytical questions about the coding curriculum, demonstrating complex join logic across tables.
-
-| Query | Question | Core Logic & Key Files Used |
+| Query | Question | Core Logic |
 | :--- | :--- | :--- |
-| **Q1** | Course with the most students. | Counts unique students enrolled in **Project** teams. (Files: `project`, `student_team`, `team_member`). |
-| **Q2** | Most popular instructor (by students taught). | Infers "students taught" by counting unique students on a project in the **same week** as a scheduled class taught by the instructor. |
+| **Q1** | Course with the most students. | Counts unique students enrolled in **Project** teams. |
+| **Q2** | Most popular instructor (by students taught). | Counts unique students whose project attendance is inferred by **week number** matching class schedule. |
 | **Q3** | Most popular instructor (by rating). | Calculates the **Average Star Rating** from the `rating.csv` where `rated_type = 'instructor'`. |
-| **Q4** | Enrollment listing (class name and count). | Uses the same complex **attendance inference logic** as Q2 to count students for all coding classes. |
-| **Q5** | Total pay for an instructor X (Grace Hopper, ID 1). | Calculates total pay as (Teaching Hours \* Teaching Rate) + (Supervision Hours \* Supervision Rate). |
+| **Q4** | Enrollment listing (class name and count). | Uses the same complex **attendance inference logic** as Q2 for all coding classes. |
+| **Q5** | Total pay for an instructor X. | Calculates (Teaching Hours \* Rate) + (Supervision Hours \* Rate) using corrected DuckDB functions. |
 
 ---
 
 ## 💻 Setup & Execution
 
-The project files are structured by query (Q1-Q5). To execute any query, you must navigate to its specific folder (`Qx/`) as the Python scripts reference the CSV files located in their respective subdirectories.
+The project is designed to be executed directly from the respective query folders (`Qx/`) to ensure the Python scripts correctly find the necessary local CSV files.
 
 ### 1️⃣ Prerequisites
 
@@ -65,31 +64,55 @@ You must have **Python** and the **DuckDB** library installed:
 
 ```bash
 pip install duckdb
-```
+````
+
 ### 2️⃣ Execution
-To run the query for Question 1 (as an example):
+
+To run the query for **Question 3** (as an example):
+
 ```bash
 # Navigate to the subdirectory
 cd Q3
 
 # Execute the Python script
 python Q3.py
-
 ```
 
-Execute the Python script
+**Example Output (Q3: Most Popular Instructor by Rating):**
 
-<img width="500" height="150" alt="image" src="https://github.com/user-attachments/assets/753ac124-f646-424b-8adb-53109ab680a3" />
+```text
+┌───────────────┬────────────┬───────────┬──────────────────────┐
+│ instructor_id │ first_name │ last_name │      avg_rating      │
+│     int64     │  varchar   │  varchar  │        double        │
+├───────────────┼────────────┼───────────┼──────────────────────┤
+│             1 │ Grace      │ Hopper    │ 4.666666666666667    │
+└───────────────┴────────────┴───────────┴──────────────────────┘
+```
 
+-----
 
+## 📁 Project Structure
 
-### 📁 Project Structure
-The repository is organized by query into five folders (Q1-Q5), each containing the minimum set of files required for its individual execution.
-<img width="1345" height="425" alt="image" src="https://github.com/user-attachments/assets/31080cc9-c70a-4be4-8ad3-a0be3777b35a" />
+The repository is organized by query into five folders (Q1-Q5), each containing the minimum set of files required for its individual script to run successfully.
 
+| File | Description |
+| :--- | :--- |
+| `Qx/Qx.py` | Python script containing the final SQL and DuckDB execution logic. |
+| `Qx/Qx_Kimi_SQL.png` | Screenshot of the original AI-generated SQL query. |
+| `Qx/Qx_out.png` | Screenshot of the query result. |
+| `Qx/*.csv` | The required data files for the specific query (e.g., `Q3/instructor.csv`, `Q3/rating.csv`). |
 
-### 🧑‍💻 Author
-Rusheel Vijay Sable3
-Role: AI & Data Science Engineer
-Focus: Data Analytics, LLM-based Workflow Automation, and High-Performance Databases.
+-----
+
+## 🧑‍💻 Author
+
+**Rusheel Vijay Sable**
+
+  * **Role:** AI & Data Science Engineer
+  * **Focus:** Data Analytics, LLM-based Workflow Automation, and High-Performance Databases.
+
+<!-- end list -->
+
+```
+```
 
