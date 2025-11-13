@@ -1,84 +1,95 @@
-#### **Database Homework 2 Submission**
+# 🤖 AI SQL DuckDB Analytics
+
+**Bridging Large Language Models and High-Performance Analytics using DuckDB and Python.**
+
+This repository documents an analytical project focused on using an **AI model (Kimi K2)** to generate complex SQL queries and executing them efficiently using the **DuckDB** in-process OLAP database.
+
+The project demonstrates the practical application of AI in generating complex business logic, particularly for calculating metrics like attendance (via project/class week correlation) and payroll.
+
+---
+
+## 📋 Table of Contents
+
+1.  [🧠 Methodology: AI-Generated SQL](#-methodology-ai-generated-sql)
+2.  [🛠 Tech Stack](#-tech-stack)
+3.  [📊 Analytics Queries (Q1 - Q5)](#-analytics-queries-q1---q5)
+4.  [💻 Setup & Execution](#-setup--execution)
+5.  [📁 Project Structure](#-project-structure)
+
+---
+
+## 🧠 Methodology: AI-Generated SQL
+
+The core of this project is the integration of an AI model (Kimi K2) to generate five complex SQL queries required for the college's analytics.
+
+### LLM Integration & Adaptation
+
+* **SQL Generation:** Kimi K2 provided the underlying logic for all five queries (Q1-Q5).
+* **Execution:** The queries are executed in Python using the **DuckDB** library, which reads data directly from the local CSV files (e.g., `instructor.csv`, `class_schedule.csv`).
+* **Technical Fix (Q5):** The AI-generated SQL for payroll calculation (Q5) required a manual fix in the Python script to use DuckDB's native functions (`strptime` and `date_part`) to correctly calculate the difference between `start_time` and `end_time` in hours.
+
+---
+
+## 🛠 Tech Stack
+
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **Database** | **DuckDB** | High-performance, in-process analytical processing (OLAP). |
+| **SQL Generation** | Kimi K2 (AI Model) | Generates complex analytical query logic. |
+| **Driver** | Python | Orchestrates SQL execution and data presentation. |
+| **Data Source** | CSV Files (9 total) | Raw data files used as tables (e.g., `instructor.csv`, `rating.csv`). |
+
+---
+
+## 📊 Analytics Queries (Q1 - Q5)
+
+The project solves five key analytical questions about the coding curriculum, demonstrating complex join logic across tables.
+
+| Query | Question | Core Logic & Key Files Used |
+| :--- | :--- | :--- |
+| **Q1** | Course with the most students. | Counts unique students enrolled in **Project** teams. (Files: `project`, `student_team`, `team_member`). |
+| **Q2** | Most popular instructor (by students taught). | Infers "students taught" by counting unique students on a project in the **same week** as a scheduled class taught by the instructor. |
+| **Q3** | Most popular instructor (by rating). | Calculates the **Average Star Rating** from the `rating.csv` where `rated_type = 'instructor'`. |
+| **Q4** | Enrollment listing (class name and count). | Uses the same complex **attendance inference logic** as Q2 to count students for all coding classes. |
+| **Q5** | Total pay for an instructor X (Grace Hopper, ID 1). | Calculates total pay as (Teaching Hours \* Teaching Rate) + (Supervision Hours \* Supervision Rate). |
+
+---
+
+## 💻 Setup & Execution
+
+The project files are structured by query (Q1-Q5). To execute any query, you must navigate to its specific folder (`Qx/`) as the Python scripts reference the CSV files located in their respective subdirectories.
+
+### 1️⃣ Prerequisites
+
+You must have **Python** and the **DuckDB** library installed:
+
+```bash
+pip install duckdb
+```
+### 2️⃣ Execution
+To run the query for Question 1 (as an example):
+```bash
+# Navigate to the subdirectory
+cd Q3
+
+# Execute the Python script
+python Q3.py
+
+```
+
+Execute the Python script
+
+<img width="500" height="150" alt="image" src="https://github.com/user-attachments/assets/753ac124-f646-424b-8adb-53109ab680a3" />
 
 
 
-This submission contains the deliverables for Homework 2, involving SQL generation by Kimi K2 and execution using DuckDB via Python.
+### 📁 Project Structure
+The repository is organized by query into five folders (Q1-Q5), each containing the minimum set of files required for its individual execution.
+<img width="1345" height="425" alt="image" src="https://github.com/user-attachments/assets/31080cc9-c70a-4be4-8ad3-a0be3777b35a" />
 
 
-
-1\. Submission Structure and Organization
-
-The submission is organized by query into five folders (Q1 through Q5). This structure is based on the minimal files necessary to execute each individual query.
-
-
-
-File Path Execution Note
-
-The Python scripts (Qx.py) were placed in subdirectories. To guarantee successful execution, only the specific CSV files explicitly referenced in the SQL for that query were included in its corresponding folder.
-
-
-
-For example:
-
-
-
-Q1 Folder contains: Q1.py, Q1\_Kimi\_SQL.png, Q1\_out.png, project.csv, student\_team.csv, and team\_member.csv.
-
-
-
-Q3 Folder contains: Q3.py, Q3\_Kimi\_SQL.png, Q3\_out.png, instructor.csv, and rating.csv.
-
-
-
-The grader should run the Python scripts directly from within their respective folders (e.g., run python Q1.py while inside the Q1 folder).
-
-
-
-2\. Query Logic and Data Scope
-
-The assignment required data from 9 total CSV files across all five questions. The data correctly reflects the logical model created by the AI.
-
-
-
-Below is a summary of the five questions and the underlying logic, which verifies the structure of the CSV files and the purpose of the SQL queries.
-
-
-
-Question: Course with most students.
-
-Key Files Used: project, student\_team, team\_member.
-
-Logic: Assumed "course" means Project. Counts unique students enrolled in projects.
-
-
-
-Question: Most popular instructor (by students taught).
-
-Key Files Used: 6 files (instructor, class\_schedule, student, project, student\_team, team\_member).
-
-Logic: Attendance is inferred: a student is counted as "taught" if they are on a project running in the same week as the scheduled class.
-
-
-
-Question: Most popular instructor (by rating).
-
-Key Files Used: instructor, rating.
-
-Logic: Calculates the Average Star Rating from the rating.csv where rated\_type = 'instructor'.
-
-
-
-Question: Enrollment listing (class name and count).
-
-Key Files Used: 6 files (Same set as Q2).
-
-Logic: Uses the same complex attendance inference as Q2 to count students for all coding classes.
-
-
-
-Question: Given an instructor X, how much was he/she paid?
-
-Key Files Used: instructor, class\_schedule, project\_supervision.
-
-Technical Note: The SQL was fixed in the Python script to use DuckDB's native functions (strptime and date\_part) to correctly calculate teaching hours, resolving a technical incompatibility issue with the AI-generated SQL.
+### 🧑‍💻 Author
+Rusheel Vijay Sable3
+Role: AI & Data Science Engineer
+Focus: Data Analytics, LLM-based Workflow Automation, and High-Performance Databases.
 
